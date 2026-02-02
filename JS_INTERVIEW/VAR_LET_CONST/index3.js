@@ -1,0 +1,1 @@
+// const - no redeclare and reintiallized  fixed value at time of intiallization u have to give value
