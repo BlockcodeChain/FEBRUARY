@@ -25,6 +25,7 @@ export const SignUp=async(req,res)=>{
         maxAge:24*60*60*1000,
         secure:process.env.NODE_ENV==="production"
     })
+    
     return res.status(201).json({message:"User created successfully",user:newuser})
  }
  catch(err){
