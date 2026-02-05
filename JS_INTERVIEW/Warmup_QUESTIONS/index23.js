@@ -1,0 +1,1 @@
+// how would u check if a number is an integer
