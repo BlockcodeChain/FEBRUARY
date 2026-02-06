@@ -1,2 +1,7 @@
-const result =arrobj.filter((obj)=> obj.gender==="male").map(obj=>obj.name)
-// console.log(result)
+array.forEach(item=>{
+//     if(typeof item==="number"){
+//         sum+=item;
+//     }
+    
+// })
+// console.log(sum);
