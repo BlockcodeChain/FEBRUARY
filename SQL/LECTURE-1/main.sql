@@ -1,0 +1,3 @@
+CREATE DATABASE school;
+USE school;
+CREATE TABLE Student (id INT PRIMARY KEY ,name VARCHAR(50));
