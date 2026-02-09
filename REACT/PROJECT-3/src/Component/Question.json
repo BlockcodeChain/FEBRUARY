@@ -1,0 +1,97 @@
+[
+  {
+    "id": 1,
+    "question": "HTML ka full form kya hai?",
+    "options": [
+      "Hyper Text Markup Language",
+      "High Text Machine Language",
+      "Hyper Tool Multi Language",
+      "Home Text Modern Language"
+    ],
+    "answer": "Hyper Text Markup Language"
+  },
+
+  {
+    "id": 2,
+    "question": "CSS ka kaam kya hota hai?",
+    "options": [
+      "Web page styling",
+      "Database manage",
+      "Server banana",
+      "Programming logic"
+    ],
+    "answer": "Web page styling"
+  },
+
+  {
+    "id": 3,
+    "question": "JavaScript kis type ki language hai?",
+    "options": [
+      "Programming",
+      "Markup",
+      "Design",
+      "Network"
+    ],
+    "answer": "Programming"
+  },
+
+  {
+    "id": 4,
+    "question": "React me data parent se child jata hai through?",
+    "options": [
+      "Props",
+      "State",
+      "Class",
+      "Hook"
+    ],
+    "answer": "Props"
+  },
+
+  {
+    "id": 5,
+    "question": "useState kis kaam ke liye hota hai?",
+    "options": [
+      "State manage",
+      "API call",
+      "Routing",
+      "Styling"
+    ],
+    "answer": "State manage"
+  },
+
+  {
+    "id": 6,
+    "question": "JSX ka full form kya hai?",
+    "options": [
+      "JavaScript XML",
+      "Java Syntax X",
+      "Json XML",
+      "Java Style X"
+    ],
+    "answer": "JavaScript XML"
+  },
+
+  {
+    "id": 7,
+    "question": "Array me last element nikalne ke liye?",
+    "options": [
+      "pop()",
+      "push()",
+      "shift()",
+      "map()"
+    ],
+    "answer": "pop()"
+  },
+
+  {
+    "id": 8,
+    "question": "React component return karta hai?",
+    "options": [
+      "JSX",
+      "HTML file",
+      "CSS",
+      "JSON"
+    ],
+    "answer": "JSX"
+  }
+]
