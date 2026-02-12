@@ -1,35 +1,34 @@
 import React, { useState, useEffect } from 'react'
 
-const Timer = ({ time, onTimeUp, resetKey }) => {
-
-  const [left, setLeft] = useState(time)
-
-  useEffect(() => {
-    setLeft(time)
-  }, [resetKey])
+const Timer = () => {
+  const [leftTime, setLeftTime] = useState(65)
 
   useEffect(() => {
-
-    const id = setInterval(() => {
-
-      setLeft(p => {
-        if (p <= 1) {
-          clearInterval(id)
-          onTimeUp()
+    const interval = setInterval(() => {
+      setLeftTime(prev => {
+        if (prev <= 1) {
+          clearInterval(interval)
           return 0
         }
-        return p - 1
+        return prev - 1
       })
-
     }, 1000)
 
-    return () => clearInterval(id)
+    return () => clearInterval(interval)
+  }, [])
 
-  }, [resetKey])
+  // Format MM:SS
+  const minutes = Math.floor(leftTime / 60)
+    .toString()
+    .padStart(2, "0")
+
+  const seconds = (leftTime % 60)
+    .toString()
+    .padStart(2, "0")
 
   return (
-    <div className='bg-gray-800 px-4 py-2 rounded-xl shadow'>
-      🕒 Time : {left}s
+    <div className='bg-gray-800 px-4 py-2 rounded-xl shadow text-white'>
+      🕒 Time : {minutes}:{seconds}
     </div>
   )
 }

@@ -101,3 +101,38 @@ const Ques = ({ finishByTimer, onQuestionChange }) => {
 }
 
 export default Ques
+
+
+
+
+// import { toast } from "sonner";
+// import toast from "react-hot-toast";
+// import { toast } from "react-toastify";
+// const CopyButton = () => {
+//   const handleCopy = async () => {
+//     await navigator.clipboard.writeText("Hello Samridhi!");
+
+//     toast.success("Copied to clipboard");
+//   };
+
+//   return (
+//     <button
+//       onClick={handleCopy}
+//       className="px-4 py-2 bg-blue-600 text-white rounded-md"
+//     >
+//       Copy
+//     </button>
+//   );
+// };
+
+// export default CopyButton;
+
+
+
+
+
+
+
+
+
+
