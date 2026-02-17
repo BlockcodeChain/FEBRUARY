@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Visual Master Guide 🗄️</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a14;
+  --surface: #12121f;
+  --surface2: #1a1a2e;
+  --border: rgba(255,255,255,0.07);
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --pink:   #f472b6;
+  --purple: #a78bfa;
+  --blue:   #60a5fa;
+  --cyan:   #22d3ee;
+  --green:  #34d399;
+  --yellow: #fbbf24;
+  --orange: #fb923c;
+  --red:    #f87171;
+  --indigo: #818cf8;
+  --teal:   #2dd4bf;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:40px 20px;position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 10% 20%, rgba(167,139,250,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 80%, rgba(34,211,238,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(244,114,182,0.06) 0%, transparent 60%);
+  animation: bgpulse 8s ease-in-out infinite alternate;
+}
+@keyframes bgpulse{from{opacity:.7}to{opacity:1}}
+
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.3);
+  padding:8px 20px;border-radius:999px;font-size:.85rem;color:var(--purple);
+  margin-bottom:24px;position:relative;
+  animation:fadedown .6s ease both;
+}
+@keyframes fadedown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+
+.hero h1{
+  font-size:clamp(2.8rem,8vw,6rem);font-weight:900;line-height:1.05;
+  position:relative;animation:fadein .8s ease .2s both;
+}
+@keyframes fadein{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+.hero h1 .line1{
+  background:linear-gradient(135deg,#f472b6,#a78bfa,#60a5fa);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero h1 .line2{
+  background:linear-gradient(135deg,#22d3ee,#34d399,#fbbf24);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{color:var(--muted);font-size:1.1rem;margin:16px 0 32px;animation:fadein .8s ease .4s both;max-width:600px}
+
+.nav-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;animation:fadein .8s ease .6s both}
+.nav-chip{
+  padding:8px 18px;border-radius:12px;font-size:.82rem;font-weight:700;
+  cursor:pointer;border:1.5px solid;text-decoration:none;transition:all .2s;display:inline-block;
+}
+.nav-chip:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.nc1{color:var(--pink);border-color:var(--pink);background:rgba(244,114,182,.1)}
+.nc2{color:var(--cyan);border-color:var(--cyan);background:rgba(34,211,238,.1)}
+.nc3{color:var(--green);border-color:var(--green);background:rgba(52,211,153,.1)}
+.nc4{color:var(--yellow);border-color:var(--yellow);background:rgba(251,191,36,.1)}
+.nc5{color:var(--orange);border-color:var(--orange);background:rgba(251,146,60,.1)}
+.nc6{color:var(--purple);border-color:var(--purple);background:rgba(167,139,250,.1)}
+.nc7{color:var(--red);border-color:var(--red);background:rgba(248,113,113,.1)}
+
+.scroll-hint{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:.8rem;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+/* ── CONTAINER ── */
+.container{max-width:1100px;margin:0 auto;padding:0 20px 80px}
+
+/* ── SECTION WRAPPER ── */
+.sec{margin:60px 0}
+.sec-title{
+  display:flex;align-items:center;gap:14px;margin-bottom:32px;
+  padding-bottom:16px;border-bottom:2px solid var(--border);
+}
+.sec-icon{
+  width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;flex-shrink:0;
+}
+.sec-title h2{font-size:1.8rem;font-weight:900}
+.sec-title p{color:var(--muted);font-size:.9rem;margin-top:2px}
+
+/* ── CARD BASE ── */
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:18px;
+  padding:24px;transition:transform .25s,box-shadow .25s;
+}
+.card:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+
+/* ── GRID ── */
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+
+/* ──────────────────────────────────────────────
+   DIAGRAM: SQL FAMILY TREE
+   ────────────────────────────────────────────── */
+.family-tree{
+  background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  padding:30px;overflow-x:auto;
+}
+.ft-root{
+  display:flex;justify-content:center;margin-bottom:30px;
+}
+.ft-node{
+  display:inline-flex;flex-direction:column;align-items:center;gap:4px;
+  padding:14px 28px;border-radius:14px;font-weight:800;font-size:1rem;
+  border:2px solid;position:relative;
+}
+.ft-root-node{
+  background:linear-gradient(135deg,rgba(167,139,250,.25),rgba(244,114,182,.15));
+  border-color:var(--purple);color:var(--purple);font-size:1.3rem;padding:18px 40px;
+}
+.ft-connector{
+  display:flex;justify-content:center;gap:0;
+  border-top:3px solid rgba(255,255,255,.1);
+  margin:0 60px;position:relative;
+}
+.ft-branches{
+  display:flex;justify-content:center;gap:16px;flex-wrap:wrap;
+}
+.ft-branch{
+  display:flex;flex-direction:column;align-items:center;
+}
+.ft-vline{
+  width:3px;height:30px;
+  background:linear-gradient(to bottom,rgba(255,255,255,.15),rgba(255,255,255,.05));
+}
+.ft-leaf{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:12px 20px;border-radius:12px;font-weight:700;font-size:.88rem;
+  border:2px solid;min-width:140px;text-align:center;
+  transition:transform .2s,box-shadow .2s;cursor:default;
+}
+.ft-leaf:hover{transform:scale(1.05);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.ft-leaf small{font-weight:500;font-size:.72rem;opacity:.8;line-height:1.4}
+.ft-commands{
+  display:flex;flex-direction:column;gap:4px;margin-top:8px;
+}
+.ft-cmd{
+  padding:3px 10px;border-radius:6px;font-size:.7rem;font-weight:700;
+  font-family:'Fira Code',monospace;
+}
+.fl-ddl{border-color:var(--pink);color:var(--pink);background:rgba(244,114,182,.1)}
+.fl-ddl .ft-cmd{background:rgba(244,114,182,.15);color:var(--pink)}
+.fl-dml{border-color:var(--cyan);color:var(--cyan);background:rgba(34,211,238,.1)}
+.fl-dml .ft-cmd{background:rgba(34,211,238,.15);color:var(--cyan)}
+.fl-dcl{border-color:var(--green);color:var(--green);background:rgba(52,211,153,.1)}
+.fl-dcl .ft-cmd{background:rgba(52,211,153,.15);color:var(--green)}
+.fl-tcl{border-color:var(--yellow);color:var(--yellow);background:rgba(251,191,36,.1)}
+.fl-tcl .ft-cmd{background:rgba(251,191,36,.15);color:var(--yellow)}
+
+/* ── SELECT FLOW DIAGRAM ── */
+.flow-diagram{display:flex;flex-direction:column;align-items:center;gap:0;padding:20px 0}
+.flow-step{
+  display:flex;align-items:center;gap:16px;
+  background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:12px;padding:12px 20px;width:100%;max-width:680px;
+  transition:all .2s;cursor:default;position:relative;
+}
+.flow-step:hover{transform:translateX(6px)}
+.flow-step .step-num{
+  width:34px;height:34px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;font-weight:900;font-size:.85rem;flex-shrink:0;
+}
+.flow-step .step-name{font-weight:800;font-size:.95rem;min-width:120px}
+.flow-step .step-desc{color:var(--muted);font-size:.82rem}
+.flow-arrow{
+  font-size:1.5rem;color:rgba(255,255,255,.2);margin:3px 0;
+  animation:arrowpulse 2s ease infinite;
+}
+@keyframes arrowpulse{0%,100%{opacity:.3}50%{opacity:.8}}
+
+/* ── TABLE DIAGRAM ── */
+.table-diagram{
+  background:var(--surface2);border-radius:16px;overflow:hidden;
+  border:2px solid var(--border);
+}
+.td-header{
+  padding:12px 16px;font-weight:800;font-size:.9rem;
+  display:flex;align-items:center;gap:8px;
+}
+.td-row{
+  display:grid;padding:10px 16px;border-top:1px solid var(--border);
+  font-size:.85rem;align-items:center;transition:background .15s;
+}
+.td-row:hover{background:rgba(255,255,255,.04)}
+.td-pk{color:var(--yellow);font-size:.7rem;font-weight:700;padding:2px 6px;background:rgba(251,191,36,.15);border-radius:4px;border:1px solid rgba(251,191,36,.3)}
+.td-fk{color:var(--cyan);font-size:.7rem;font-weight:700;padding:2px 6px;background:rgba(34,211,238,.15);border-radius:4px;border:1px solid rgba(34,211,238,.3)}
+.td-type{font-family:'Fira Code',monospace;color:var(--muted);font-size:.78rem}
+.td-constraint{font-size:.72rem;padding:2px 7px;border-radius:4px;font-weight:700}
+.con-nn{background:rgba(248,113,113,.15);color:var(--red);border:1px solid rgba(248,113,113,.3)}
+.con-uq{background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.3)}
+.con-df{background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3)}
+
+/* ── JOIN DIAGRAM ── */
+.join-visual{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.join-circles{
+  position:relative;width:180px;height:90px;flex-shrink:0;
+}
+.circle-a,.circle-b{
+  position:absolute;width:70px;height:70px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.75rem;top:10px;
+}
+.circle-a{left:0;border:3px solid var(--blue)}
+.circle-b{right:0;border:3px solid var(--orange)}
+.circle-highlight{
+  position:absolute;top:10px;left:50%;transform:translateX(-50%);
+  width:40px;height:70px;border-radius:0;overflow:hidden;pointer-events:none;
+}
+
+.join-card-big{
+  background:var(--surface2);border:1.5px solid var(--border);border-radius:16px;
+  overflow:hidden;transition:transform .2s,box-shadow .2s;
+}
+.join-card-big:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(0,0,0,.5)}
+.join-card-header{padding:14px 18px;font-weight:800;font-size:1rem;display:flex;align-items:center;gap:8px}
+.join-card-body{padding:14px 18px;color:var(--muted);font-size:.85rem;line-height:1.6}
+.join-card-code{
+  padding:12px 18px;background:rgba(0,0,0,.3);font-family:'Fira Code',monospace;
+  font-size:.78rem;color:var(--green);border-top:1px solid var(--border);
+}
+.join-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+
+/* ── VENN DIAGRAM SVG ── */
+.venn-container{display:flex;justify-content:center;margin:10px 0}
+
+/* ── SET OP DIAGRAM ── */
+.setop-row{display:flex;align-items:center;gap:20px;padding:16px;background:var(--surface2);border-radius:14px;border:1px solid var(--border);margin:10px 0;flex-wrap:wrap}
+.setop-venn{display:flex;align-items:center;justify-content:center;min-width:100px}
+.setop-info h4{font-weight:800;font-size:.95rem;margin-bottom:4px}
+.setop-info p{color:var(--muted);font-size:.82rem;line-height:1.5}
+.setop-code{font-family:'Fira Code',monospace;font-size:.75rem;margin-top:6px;padding:4px 10px;border-radius:6px}
+
+/* ── WINDOW FUNCTION DIAGRAM ── */
+.wf-table{
+  background:var(--surface2);border-radius:14px;overflow:hidden;border:1px solid var(--border);
+}
+.wf-thead{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;background:rgba(255,255,255,.06);padding:10px 16px;font-weight:800;font-size:.8rem;gap:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.wf-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;padding:10px 16px;border-top:1px solid var(--border);font-size:.85rem;gap:8px;transition:background .15s}
+.wf-row:hover{background:rgba(255,255,255,.03)}
+.wf-partition{border-left:3px solid var(--purple);padding-left:10px!important}
+.wf-highlight{font-weight:800;padding:2px 8px;border-radius:6px;text-align:center}
+
+/* ── INDEX DIAGRAM ── */
+.index-diagram{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap}
+.index-side{flex:1;min-width:200px}
+.index-arrow-big{font-size:2rem;color:var(--muted);align-self:center;flex-shrink:0}
+
+/* ── DELETE-TRUNCATE-DROP DIAGRAM ── */
+.dtd-row{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin:20px 0}
+.dtd-card{
+  flex:1;min-width:180px;max-width:240px;border-radius:16px;
+  padding:20px;border:2px solid;text-align:center;
+  transition:transform .2s,box-shadow .2s;cursor:default;
+}
+.dtd-card:hover{transform:scale(1.04);box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.dtd-icon{font-size:2.5rem;margin-bottom:10px}
+.dtd-title{font-weight:900;font-size:1.1rem;margin-bottom:8px}
+.dtd-cards-detail{margin-top:10px;display:flex;flex-direction:column;gap:4px}
+.dtd-detail{font-size:.75rem;padding:3px 8px;border-radius:6px;font-weight:600}
+
+/* ── ACID DIAGRAM ── */
+.acid-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.acid-card{
+  border-radius:16px;padding:20px;border:2px solid;text-align:center;
+  transition:transform .2s;cursor:default;
+}
+.acid-card:hover{transform:translateY(-5px)}
+.acid-letter{font-size:3rem;font-weight:900;line-height:1}
+.acid-word{font-size:.75rem;font-weight:600;opacity:.7;margin-bottom:8px}
+.acid-desc{font-size:.82rem;color:var(--muted);line-height:1.5}
+
+/* ── EXECUTION ORDER DIAGRAM ── */
+.exec-flow{
+  display:flex;flex-wrap:wrap;gap:0;align-items:stretch;
+  background:var(--surface2);border-radius:16px;padding:20px;border:1px solid var(--border);
+}
+.exec-block{
+  flex:1;min-width:80px;display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:12px 6px;position:relative;
+}
+.exec-block:not(:last-child)::after{
+  content:'→';position:absolute;right:-8px;top:50%;transform:translateY(-50%);
+  color:rgba(255,255,255,.2);font-size:1.2rem;z-index:1;
+}
+.exec-num{
+  width:28px;height:28px;border-radius:8px;display:flex;align-items:center;
+  justify-content:center;font-weight:900;font-size:.8rem;flex-shrink:0;
+}
+.exec-name{font-weight:800;font-size:.82rem;text-align:center}
+.exec-sub{font-size:.68rem;color:var(--muted);text-align:center;line-height:1.3}
+
+/* ── SUBQUERY DIAGRAM ── */
+.subq-visual{
+  background:var(--surface2);border-radius:16px;padding:24px;border:1px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.subq-outer{
+  border:2px dashed;border-radius:14px;padding:20px;margin-bottom:12px;
+  position:relative;
+}
+.subq-label{
+  position:absolute;top:-10px;left:16px;font-size:.72rem;font-weight:800;
+  padding:2px 10px;border-radius:6px;
+}
+.subq-inner{
+  border:2px dashed;border-radius:10px;padding:14px;
+  position:relative;margin-top:10px;
+}
+.subq-code{font-family:'Fira Code',monospace;font-size:.82rem;line-height:1.7}
+
+/* ── COMPARISON TABLE ── */
+.comp-table{background:var(--surface2);border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+.ct-head{display:grid;padding:12px 16px;font-weight:800;font-size:.82rem;background:rgba(255,255,255,.06);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);gap:8px}
+.ct-row{display:grid;padding:12px 16px;border-top:1px solid var(--border);font-size:.85rem;gap:8px;transition:background .15s;align-items:center}
+.ct-row:hover{background:rgba(255,255,255,.03)}
+
+/* ── LIKE PATTERN DIAGRAM ── */
+.pattern-cards{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.pc{
+  background:var(--surface2);border:2px solid;border-radius:14px;
+  padding:16px 20px;text-align:center;min-width:160px;flex:1;max-width:200px;
+  transition:transform .2s;cursor:default;
+}
+.pc:hover{transform:scale(1.05)}
+.pc-pattern{font-family:'Fira Code',monospace;font-size:1.1rem;font-weight:700;margin-bottom:6px}
+.pc-desc{font-size:.78rem;color:var(--muted);margin-bottom:8px}
+.pc-match{font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:6px}
+
+/* ── INTERVIEW Q&A ── */
+.qa-section{margin:60px 0}
+.qa-title{text-align:center;font-size:2rem;font-weight:900;margin-bottom:8px;
+  background:linear-gradient(135deg,var(--yellow),var(--orange));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.qa-sub{text-align:center;color:var(--muted);margin-bottom:32px}
+
+.qa-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:18px;
+  overflow:hidden;margin:16px 0;transition:box-shadow .2s;
+}
+.qa-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.qa-question{
+  padding:18px 24px;display:flex;align-items:flex-start;gap:14px;
+  cursor:pointer;user-select:none;
+}
+.qa-q-badge{
+  flex-shrink:0;width:36px;height:36px;border-radius:10px;display:flex;
+  align-items:center;justify-content:center;font-weight:900;font-size:.9rem;
+}
+.qa-q-text{font-weight:700;font-size:.95rem;line-height:1.5;flex:1}
+.qa-difficulty{
+  flex-shrink:0;font-size:.7rem;font-weight:800;padding:3px 10px;border-radius:8px;align-self:flex-start;
+}
+.diff-easy{background:rgba(52,211,153,.2);color:var(--green);border:1px solid rgba(52,211,153,.3)}
+.diff-med{background:rgba(251,191,36,.2);color:var(--yellow);border:1px solid rgba(251,191,36,.3)}
+.diff-hard{background:rgba(248,113,113,.2);color:var(--red);border:1px solid rgba(248,113,113,.3)}
+.diff-hot{background:rgba(251,146,60,.2);color:var(--orange);border:1px solid rgba(251,146,60,.3)}
+
+.qa-answer{
+  padding:20px 24px;border-top:1px solid var(--border);
+  background:rgba(0,0,0,.2);
+}
+.qa-ans-text{color:var(--muted);font-size:.88rem;line-height:1.7;margin-bottom:14px}
+.qa-code{
+  background:#0d1117;border-radius:12px;padding:16px;
+  font-family:'Fira Code',monospace;font-size:.8rem;line-height:1.8;
+  overflow-x:auto;border-left:3px solid;
+}
+.qa-key-points{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.qa-kp{
+  display:flex;align-items:flex-start;gap:8px;font-size:.85rem;
+  padding:8px 12px;background:rgba(255,255,255,.03);border-radius:8px;
+}
+.qa-kp-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:6px}
+
+/* ── SUMMARY SECTION ── */
+.summary-section{
+  background:linear-gradient(135deg,rgba(167,139,250,.08),rgba(34,211,238,.05));
+  border:1px solid rgba(167,139,250,.2);border-radius:24px;padding:40px;margin:40px 0;
+}
+.summary-title{
+  text-align:center;font-size:2.2rem;font-weight:900;margin-bottom:6px;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:28px}
+.summary-item{
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:14px;padding:16px;display:flex;gap:12px;align-items:flex-start;
+  transition:background .2s;
+}
+.summary-item:hover{background:rgba(255,255,255,.07)}
+.sum-icon{font-size:1.5rem;flex-shrink:0;margin-top:2px}
+.sum-content h4{font-weight:800;font-size:.92rem;margin-bottom:4px}
+.sum-content p{color:var(--muted);font-size:.8rem;line-height:1.5}
+
+/* ── CODE COLORS ── */
+.kw{color:#ff79c6;font-weight:600}
+.fn{color:#50fa7b}
+.str{color:#f1fa8c}
+.cm{color:#6272a4;font-style:italic}
+.nu{color:#bd93f9}
+.op{color:#ff5555}
+.hl{background:rgba(255,255,150,.1);border-radius:3px;padding:0 3px}
+
+/* ── FOOTER ── */
+footer{
+  text-align:center;padding:50px 20px;
+  background:linear-gradient(135deg,rgba(167,139,250,.08),rgba(34,211,238,.05));
+  border-top:1px solid var(--border);
+}
+footer .big{font-size:3rem;margin-bottom:12px}
+footer h3{font-size:1.4rem;font-weight:900;background:linear-gradient(90deg,var(--pink),var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+footer p{color:var(--muted);font-size:.9rem}
+
+/* ── SCROLL ANIMATIONS ── */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .6s,transform .6s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .exec-flow{flex-direction:column}
+  .exec-block::after{content:'↓'!important;right:auto!important;top:auto!important;bottom:-16px;left:50%;transform:translateX(-50%)}
+  .join-grid{grid-template-columns:1fr}
+  .dtd-row{flex-direction:column;align-items:center}
+  .acid-grid{grid-template-columns:1fr 1fr}
+}
+
+/* Syntax highlight helpers */
+pre{white-space:pre-wrap;word-break:break-word}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-badge">🎓 Placement Interview Master Guide</div>
+  <h1>
+    <span class="line1">SQL Complete</span><br>
+    <span class="line2">Visual Guide</span>
+  </h1>
+  <p class="hero-sub">Diagrams se samjho • Interview questions • Last mein full summary — sab ek jagah!</p>
+  <div class="nav-chips">
+    <a href="#s1" class="nav-chip nc1">🗂️ Introduction</a>
+    <a href="#s2" class="nav-chip nc2">🔍 SELECT</a>
+    <a href="#s3" class="nav-chip nc3">🏗️ DDL</a>
+    <a href="#s4" class="nav-chip nc4">✏️ DML</a>
+    <a href="#s5" class="nav-chip nc5">🔎 Filtering</a>
+    <a href="#s6" class="nav-chip nc6">🔗 JOINs</a>
+    <a href="#sq" class="nav-chip nc7">🎯 Interview Q&A</a>
+  </div>
+  <div class="scroll-hint">↓ Scroll karo</div>
+</div>
+
+<div class="container">
+
+<!-- ═══════════════ SECTION 1: INTRO ═══════════════ -->
+<div class="sec reveal" id="s1">
+  <div class="sec-title">
+    <div class="sec-icon" style="background:rgba(244,114,182,.15);border:2px solid rgba(244,114,182,.3)">🗂️</div>
+    <div>
+      <h2 style="background:linear-gradient(90deg,var(--pink),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">#1 Introduction to SQL</h2>
+      <p>SQL kya hai, kaise kaam karta hai, aur kaise bante hain tables</p>
+    </div>
+  </div>
+
+  <!-- SQL FAMILY TREE DIAGRAM -->
+  <div class="family-tree reveal" style="margin-bottom:24px">
+    <div style="text-align:center;margin-bottom:20px">
+      <span style="font-size:.8rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.1em">SQL Sublanguages Family Tree</span>
+    </div>
+    <div class="ft-root">
+      <div class="ft-node ft-root-node">🗄️ SQL (Structured Query Language)</div>
+    </div>
+    <!-- connector line -->
+    <div style="display:flex;justify-content:center;margin-bottom:0">
+      <div style="width:3px;height:24px;background:rgba(255,255,255,.1)"></div>
+    </div>
+    <div style="border-top:2px solid rgba(255,255,255,.1);margin:0 5%;position:relative">
+      <!-- vertical drops -->
+      <div style="display:flex;justify-content:space-around">
+        <div style="width:3px;height:20px;background:rgba(244,114,182,.4)"></div>
+        <div style="width:3px;height:20px;background:rgba(34,211,238,.4)"></div>
+        <div style="width:3px;height:20px;background:rgba(52,211,153,.4)"></div>
+        <div style="width:3px;height:20px;background:rgba(251,191,36,.4)"></div>
+      </div>
+    </div>
+    <div class="ft-branches">
+      <div class="ft-branch">
+        <div class="ft-leaf fl-ddl">
+          <div>DDL</div>
+          <small>Data Definition Language</small>
+          <small style="color:var(--muted)">Structure banao/badlo</small>
+          <div class="ft-commands">
+            <span class="ft-cmd">CREATE</span>
+            <span class="ft-cmd">ALTER</span>
+            <span class="ft-cmd">DROP</span>
+            <span class="ft-cmd">TRUNCATE</span>
+          </div>
+        </div>
+      </div>
+      <div class="ft-branch">
+        <div class="ft-leaf fl-dml">
+          <div>DML</div>
+          <small>Data Manipulation Language</small>
+          <small style="color:var(--muted)">Data change karo</small>
+          <div class="ft-commands">
+            <span class="ft-cmd">SELECT</span>
+            <span class="ft-cmd">INSERT</span>
+            <span class="ft-cmd">UPDATE</span>
+            <span class="ft-cmd">DELETE</span>
+          </div>
+        </div>
+      </div>
+      <div class="ft-branch">
+        <div class="ft-leaf fl-dcl">
+          <div>DCL</div>
+          <small>Data Control Language</small>
+          <small style="color:var(--muted)">Permissions manage karo</small>
+          <div class="ft-commands">
+            <span class="ft-cmd">GRANT</span>
+            <span class="ft-cmd">REVOKE</span>
+          </div>
+        </div>
+      </div>
+      <div class="ft-branch">
+        <div class="ft-leaf fl-tcl">
+          <div>TCL</div>
+          <small>Transaction Control Language</small>
+          <small style="color:var(--muted)">Transactions handle karo</small>
+          <div class="ft-commands">
+            <span class="ft-cmd">COMMIT</span>
+            <span class="ft-cmd">ROLLBACK</span>
+            <span class="ft-cmd">SAVEPOINT</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABLE STRUCTURE DIAGRAM -->
+  <div class="card reveal" style="margin-bottom:16px">
+    <div style="font-weight:800;font-size:1rem;margin-bottom:16px;display:flex;align-items:center;gap:8px">
+      <span style="background:rgba(96,165,250,.15);color:var(--blue);padding:4px 12px;border-radius:8px;font-size:.8rem;border:1px solid rgba(96,165,250,.3)">TABLE ANATOMY</span>
+      <span style="color:var(--muted);font-size:.85rem">Ek table kaisi dikhti hai?</span>
+    </div>
+    <div style="overflow-x:auto">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;min-width:500px">
+        <!-- employees table -->
+        <div>
+          <div style="font-weight:800;font-size:.85rem;color:var(--cyan);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+            📋 employees
+          </div>
+          <div class="table-diagram">
+            <div class="td-header" style="background:rgba(34,211,238,.1);border-bottom:1px solid var(--border)">
+              <span style="color:var(--cyan)">Column</span>
+              <span style="color:var(--muted);font-size:.75rem">Type</span>
+              <span style="color:var(--muted);font-size:.75rem">Constraint</span>
+            </div>
+            <div class="td-row" style="grid-template-columns:1fr 1fr 1fr">
+              <span>emp_id <span class="td-pk">PK</span></span>
+              <span class="td-type">INT</span>
+              <span class="td-constraint con-nn">NOT NULL</span>
+            </div>
+            <div class="td-row" style="grid-template-columns:1fr 1fr 1fr">
+              <span>name</span>
+              <span class="td-type">VARCHAR(100)</span>
+              <span class="td-constraint con-nn">NOT NULL</span>
+            </div>
+            <div class="td-row" style="grid-template-columns:1fr 1fr 1fr">
+              <span>email</span>
+              <span class="td-type">VARCHAR(150)</span>
+              <span class="td-constraint con-uq">UNIQUE</span>
+            </div>
+            <div class="td-row" style="grid-template-columns:1fr 1fr 1fr">
+              <span>dept_id <span class="td-fk">FK</span></span>
+              <span class="td-type">INT</span>
+              <span style="color:var(--muted);font-size:.75rem">→ departments</span>
+            </div>
+            <div class="td-row" style="grid-template-columns:1fr 1fr 1fr">
+              <span>salary</span>
+              <span class="td-type">DECIMAL</span>
+              <span class="td-constraint con-df">DEFAULT 0</span>
+            </div>
+          </div>
+        </div>
+        <!-- departments table -->
+        <div>
+          <div style="font-weight:800;font-size:.85rem;color:var(--purple);margin-bottom:8px;display:flex;align-items:center;gap:6px">
+            📋 departments
+          </div>
+          <div class="table-diagram">
+            <div class="td-header" style="background:rgba(167,139,250,.1);border-bottom:1px solid var(--border)">
+              <span style="color:var(--purple)">Column</span>
+              <span style="color:var(--muted);font-size:.75rem">Type</span>
+              <span style="color:var(--muted);font-size:.75rem">Constraint</span>
+            </div>
+            <div class="td-row" style="grid-template-columns:1fr 1fr 1fr">
+              <span>dept_id <span class="td-pk">PK</span></span>
+              <span class="td-type">INT</span>
+              <span class="td-constraint con-nn">NOT NULL</span>
+            </div>
+            <div class="td-row" style="grid-template-columns:1fr 1fr 1fr">
+              <span>dept_name</span>
+              <span class="td-type">VARCHAR(50)</span>
+              <span class="td-constraint con-nn">NOT NULL</span>
+            </div>
+            <div class="td-row" style="grid-template-columns:1fr 1fr 1fr">
+              <span>location</span>
+              <span class="td-type">VARCHAR(100)</span>
+              <span class="td-constraint con-df">DEFAULT</span>
+            </div>
+          </div>
+          <div style="margin-top:10px;padding:10px;background:rgba(167,139,250,.08);border-radius:10px;border:1px dashed rgba(167,139,250,.3);font-size:.78rem;color:var(--muted);text-align:center">
+            employees.dept_id → departments.dept_id<br>
+            <span style="color:var(--purple);font-weight:700">Foreign Key Relationship 🔗</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACID DIAGRAM -->
+  <div class="reveal" style="margin-top:20px">
+    <div style="font-weight:800;font-size:1rem;margin-bottom:14px;color:var(--yellow)">⚡ ACID Properties — Transaction ki 4 Powers</div>
+    <div class="acid-grid">
+      <div class="acid-card" style="border-color:rgba(244,114,182,.4);background:rgba(244,114,182,.08)">
+        <div class="acid-letter" style="color:var(--pink)">A</div>
+        <div class="acid-word" style="color:var(--pink)">Atomicity</div>
+        <div class="acid-desc">Ya sab kuch hoga, ya kuch nahi. Transaction complete hoga ya bilkul nahi. "All or Nothing" 💥</div>
+      </div>
+      <div class="acid-card" style="border-color:rgba(34,211,238,.4);background:rgba(34,211,238,.08)">
+        <div class="acid-letter" style="color:var(--cyan)">C</div>
+        <div class="acid-word" style="color:var(--cyan)">Consistency</div>
+        <div class="acid-desc">Transaction ke baad DB valid state mein rahe. Rules aur constraints kabhi nahi todenge 📐</div>
+      </div>
+      <div class="acid-card" style="border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08)">
+        <div class="acid-letter" style="color:var(--green)">I</div>
+        <div class="acid-word" style="color:var(--green)">Isolation</div>
+        <div class="acid-desc">Ek transaction doosre ko affect nahi karega jab tak complete na ho. Alag-alag kaam 🔒</div>
+      </div>
+      <div class="acid-card" style="border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.08)">
+        <div class="acid-letter" style="color:var(--yellow)">D</div>
+        <div class="acid-word" style="color:var(--yellow)">Durability</div>
+        <div class="acid-desc">COMMIT ke baad data permanently save hai. Power cut aaye toh bhi data safe! 💾</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 2: SELECT ═══════════════ -->
+<div class="sec reveal" id="s2">
+  <div class="sec-title">
+    <div class="sec-icon" style="background:rgba(34,211,238,.15);border:2px solid rgba(34,211,238,.3)">🔍</div>
+    <div>
+      <h2 style="background:linear-gradient(90deg,var(--cyan),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">#2 Query Data — SELECT</h2>
+      <p>Data fetch karne ka sabse important command</p>
+    </div>
+  </div>
+
+  <!-- SQL EXECUTION ORDER DIAGRAM -->
+  <div class="card reveal" style="margin-bottom:20px">
+    <div style="font-weight:800;font-size:1rem;margin-bottom:6px;color:var(--cyan)">🔢 SQL Query Execution Order — Interview Favorite!</div>
+    <div style="color:var(--muted);font-size:.82rem;margin-bottom:16px">Tum likhte ho: SELECT → FROM → WHERE. Par SQL run karta hai: FROM → WHERE → SELECT!</div>
+    <div class="exec-flow">
+      <div class="exec-block">
+        <div class="exec-num" style="background:rgba(248,113,113,.2);color:var(--red)">1</div>
+        <div class="exec-name" style="color:var(--red)">FROM</div>
+        <div class="exec-sub">Table identify karo</div>
+      </div>
+      <div class="exec-block">
+        <div class="exec-num" style="background:rgba(251,146,60,.2);color:var(--orange)">2</div>
+        <div class="exec-name" style="color:var(--orange)">JOIN</div>
+        <div class="exec-sub">Tables combine karo</div>
+      </div>
+      <div class="exec-block">
+        <div class="exec-num" style="background:rgba(251,191,36,.2);color:var(--yellow)">3</div>
+        <div class="exec-name" style="color:var(--yellow)">WHERE</div>
+        <div class="exec-sub">Rows filter karo</div>
+      </div>
+      <div class="exec-block">
+        <div class="exec-num" style="background:rgba(52,211,153,.2);color:var(--green)">4</div>
+        <div class="exec-name" style="color:var(--green)">GROUP BY</div>
+        <div class="exec-sub">Groups banao</div>
+      </div>
+      <div class="exec-block">
+        <div class="exec-num" style="background:rgba(34,211,238,.2);color:var(--cyan)">5</div>
+        <div class="exec-name" style="color:var(--cyan)">HAVING</div>
+        <div class="exec-sub">Groups filter karo</div>
+      </div>
+      <div class="exec-block">
+        <div class="exec-num" style="background:rgba(96,165,250,.2);color:var(--blue)">6</div>
+        <div class="exec-name" style="color:var(--blue)">SELECT</div>
+        <div class="exec-sub">Columns chuno</div>
+      </div>
+      <div class="exec-block">
+        <div class="exec-num" style="background:rgba(167,139,250,.2);color:var(--purple)">7</div>
+        <div class="exec-name" style="color:var(--purple)">DISTINCT</div>
+        <div class="exec-sub">Duplicates hatao</div>
+      </div>
+      <div class="exec-block">
+        <div class="exec-num" style="background:rgba(244,114,182,.2);color:var(--pink)">8</div>
+        <div class="exec-name" style="color:var(--pink)">ORDER BY</div>
+        <div class="exec-sub">Sort karo</div>
+      </div>
+      <div class="exec-block">
+        <div class="exec-num" style="background:rgba(45,212,191,.2);color:var(--teal)">9</div>
+        <div class="exec-name" style="color:var(--teal)">LIMIT</div>
+        <div class="exec-sub">Rows count roko</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHERE vs HAVING DIAGRAM -->
+  <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+    <div style="background:rgba(251,191,36,.08);border:2px solid rgba(251,191,36,.3);border-radius:16px;padding:20px">
+      <div style="font-weight:900;font-size:1.1rem;color:var(--yellow);margin-bottom:8px">WHERE</div>
+      <div style="font-size:.85rem;color:var(--muted);line-height:1.6;margin-bottom:12px">Individual <strong style="color:var(--text)">ROWS</strong> ko filter karta hai — GROUP BY se PEHLE chalta hai</div>
+      <div style="font-family:'Fira Code',monospace;font-size:.78rem;background:rgba(0,0,0,.4);padding:12px;border-radius:8px;color:var(--green)">
+        SELECT dept, COUNT(*)<br>
+        FROM employees<br>
+        <span style="color:var(--yellow);font-weight:700">WHERE salary > 30000</span><br>
+        GROUP BY dept;
+      </div>
+      <div style="margin-top:10px;font-size:.78rem;color:var(--yellow)">⚡ Pehle 30k se kam wale niklo, phir group karo</div>
+    </div>
+    <div style="background:rgba(34,211,238,.08);border:2px solid rgba(34,211,238,.3);border-radius:16px;padding:20px">
+      <div style="font-weight:900;font-size:1.1rem;color:var(--cyan);margin-bottom:8px">HAVING</div>
+      <div style="font-size:.85rem;color:var(--muted);line-height:1.6;margin-bottom:12px">Groups ko filter karta hai — GROUP BY ke <strong style="color:var(--text)">BAAD</strong> chalta hai</div>
+      <div style="font-family:'Fira Code',monospace;font-size:.78rem;background:rgba(0,0,0,.4);padding:12px;border-radius:8px;color:var(--green)">
+        SELECT dept, COUNT(*)<br>
+        FROM employees<br>
+        GROUP BY dept<br>
+        <span style="color:var(--cyan);font-weight:700">HAVING COUNT(*) > 5;</span>
+      </div>
+      <div style="margin-top:10px;font-size:.78rem;color:var(--cyan)">⚡ Pehle group karo, phir 5 se kam wale nikalo</div>
+    </div>
+  </div>
+
+  <!-- AGGREGATE FUNCTIONS -->
+  <div class="card reveal">
+    <div style="font-weight:800;margin-bottom:14px;color:var(--blue)">📊 Aggregate Functions Visual</div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
+      <div style="text-align:center;padding:16px 20px;background:rgba(248,113,113,.1);border:2px solid rgba(248,113,113,.3);border-radius:14px;min-width:120px;transition:transform .2s;cursor:default" onmouseenter="this.style.transform='scale(1.08)'" onmouseleave="this.style.transform='scale(1)'">
+        <div style="font-size:2rem">🔢</div>
+        <div style="font-family:'Fira Code',monospace;font-weight:700;color:var(--red);font-size:.9rem">COUNT()</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:4px">Kitni rows hain?</div>
+      </div>
+      <div style="text-align:center;padding:16px 20px;background:rgba(52,211,153,.1);border:2px solid rgba(52,211,153,.3);border-radius:14px;min-width:120px;transition:transform .2s;cursor:default" onmouseenter="this.style.transform='scale(1.08)'" onmouseleave="this.style.transform='scale(1)'">
+        <div style="font-size:2rem">➕</div>
+        <div style="font-family:'Fira Code',monospace;font-weight:700;color:var(--green);font-size:.9rem">SUM()</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:4px">Sab jodo</div>
+      </div>
+      <div style="text-align:center;padding:16px 20px;background:rgba(96,165,250,.1);border:2px solid rgba(96,165,250,.3);border-radius:14px;min-width:120px;transition:transform .2s;cursor:default" onmouseenter="this.style.transform='scale(1.08)'" onmouseleave="this.style.transform='scale(1)'">
+        <div style="font-size:2rem">📈</div>
+        <div style="font-family:'Fira Code',monospace;font-weight:700;color:var(--blue);font-size:.9rem">AVG()</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:4px">Average nikalo</div>
+      </div>
+      <div style="text-align:center;padding:16px 20px;background:rgba(251,191,36,.1);border:2px solid rgba(251,191,36,.3);border-radius:14px;min-width:120px;transition:transform .2s;cursor:default" onmouseenter="this.style.transform='scale(1.08)'" onmouseleave="this.style.transform='scale(1)'">
+        <div style="font-size:2rem">🏆</div>
+        <div style="font-family:'Fira Code',monospace;font-weight:700;color:var(--yellow);font-size:.9rem">MAX()</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:4px">Sabse bada</div>
+      </div>
+      <div style="text-align:center;padding:16px 20px;background:rgba(167,139,250,.1);border:2px solid rgba(167,139,250,.3);border-radius:14px;min-width:120px;transition:transform .2s;cursor:default" onmouseenter="this.style.transform='scale(1.08)'" onmouseleave="this.style.transform='scale(1)'">
+        <div style="font-size:2rem">📉</div>
+        <div style="font-family:'Fira Code',monospace;font-weight:700;color:var(--purple);font-size:.9rem">MIN()</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:4px">Sabse chota</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 3: DDL ═══════════════ -->
+<div class="sec reveal" id="s3">
+  <div class="sec-title">
+    <div class="sec-icon" style="background:rgba(52,211,153,.15);border:2px solid rgba(52,211,153,.3)">🏗️</div>
+    <div>
+      <h2 style="background:linear-gradient(90deg,var(--green),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">#3 Data Definition Language — DDL</h2>
+      <p>Table ki structure banao, badlo aur hatao</p>
+    </div>
+  </div>
+
+  <!-- DROP vs TRUNCATE vs DELETE DIAGRAM -->
+  <div class="card reveal" style="margin-bottom:20px">
+    <div style="font-weight:800;font-size:1rem;margin-bottom:8px;color:var(--green)">🗑️ DROP vs TRUNCATE vs DELETE — Sabse Important!</div>
+    <div style="color:var(--muted);font-size:.82rem;margin-bottom:20px">Ye teen commands bahut confuse karte hain — diagram se samjho!</div>
+
+    <div class="dtd-row">
+      <!-- DELETE -->
+      <div class="dtd-card" style="border-color:rgba(52,211,153,.5);background:rgba(52,211,153,.06)">
+        <div class="dtd-icon">🗑️</div>
+        <div class="dtd-title" style="color:var(--green)">DELETE</div>
+        <div style="font-family:'Fira Code',monospace;font-size:.75rem;color:var(--green);background:rgba(52,211,153,.1);padding:4px 10px;border-radius:6px;margin-bottom:10px">DML Command</div>
+        <div style="font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:12px">Row by row delete karta hai. WHERE use kar sakte ho.</div>
+        <div class="dtd-cards-detail">
+          <div class="dtd-detail" style="background:rgba(52,211,153,.15);color:var(--green)">✅ Rollback ho sakta hai</div>
+          <div class="dtd-detail" style="background:rgba(52,211,153,.15);color:var(--green)">✅ WHERE laga sakte ho</div>
+          <div class="dtd-detail" style="background:rgba(52,211,153,.15);color:var(--green)">✅ Table structure rehti hai</div>
+          <div class="dtd-detail" style="background:rgba(248,113,113,.15);color:var(--red)">🐢 Slow (row by row)</div>
+        </div>
+        <div style="margin-top:12px;font-family:'Fira Code',monospace;font-size:.72rem;background:rgba(0,0,0,.3);padding:8px;border-radius:8px;color:var(--green)">
+          DELETE FROM emp<br>WHERE id = 5;
+        </div>
+      </div>
+
+      <!-- TRUNCATE -->
+      <div class="dtd-card" style="border-color:rgba(251,191,36,.5);background:rgba(251,191,36,.06)">
+        <div class="dtd-icon">⚡</div>
+        <div class="dtd-title" style="color:var(--yellow)">TRUNCATE</div>
+        <div style="font-family:'Fira Code',monospace;font-size:.75rem;color:var(--yellow);background:rgba(251,191,36,.1);padding:4px 10px;border-radius:6px;margin-bottom:10px">DDL Command</div>
+        <div style="font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:12px">Ek hi baar mein saare rows delete. Fast hai!</div>
+        <div class="dtd-cards-detail">
+          <div class="dtd-detail" style="background:rgba(248,113,113,.15);color:var(--red)">❌ Rollback NAHI hota</div>
+          <div class="dtd-detail" style="background:rgba(248,113,113,.15);color:var(--red)">❌ WHERE nahi laga sakte</div>
+          <div class="dtd-detail" style="background:rgba(251,191,36,.15);color:var(--yellow)">✅ Table structure rehti hai</div>
+          <div class="dtd-detail" style="background:rgba(251,191,36,.15);color:var(--yellow)">⚡ Bahut Fast!</div>
+        </div>
+        <div style="margin-top:12px;font-family:'Fira Code',monospace;font-size:.72rem;background:rgba(0,0,0,.3);padding:8px;border-radius:8px;color:var(--yellow)">
+          TRUNCATE TABLE emp;
+        </div>
+      </div>
+
+      <!-- DROP -->
+      <div class="dtd-card" style="border-color:rgba(248,113,113,.5);background:rgba(248,113,113,.06)">
+        <div class="dtd-icon">💣</div>
+        <div class="dtd-title" style="color:var(--red)">DROP</div>
+        <div style="font-family:'Fira Code',monospace;font-size:.75rem;color:var(--red);background:rgba(248,113,113,.1);padding:4px 10px;border-radius:6px;margin-bottom:10px">DDL Command</div>
+        <div style="font-size:.8rem;color:var(--muted);line-height:1.6;margin-bottom:12px">Poora table khatam! Data aur structure sab chala jaata hai.</div>
+        <div class="dtd-cards-detail">
+          <div class="dtd-detail" style="background:rgba(248,113,113,.15);color:var(--red)">❌ Rollback NAHI hota</div>
+          <div class="dtd-detail" style="background:rgba(248,113,113,.15);color:var(--red)">❌ Table exist nahi karti</div>
+          <div class="dtd-detail" style="background:rgba(248,113,113,.15);color:var(--red)">❌ Data bhi chala jaata</div>
+          <div class="dtd-detail" style="background:rgba(248,113,113,.15);color:var(--red)">☢️ Permanent!</div>
+        </div>
+        <div style="margin-top:12px;font-family:'Fira Code',monospace;font-size:.72rem;background:rgba(0,0,0,.3);padding:8px;border-radius:8px;color:var(--red)">
+          DROP TABLE emp;
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INDEX DIAGRAM -->
+  <div class="card reveal">
+    <div style="font-weight:800;font-size:1rem;margin-bottom:16px;color:var(--teal)">📑 Index kaise kaam karta hai?</div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+      <div style="flex:1;min-width:200px">
+        <div style="font-weight:700;color:var(--red);font-size:.85rem;margin-bottom:10px">❌ Without Index</div>
+        <div style="background:rgba(0,0,0,.3);border-radius:10px;padding:12px;font-size:.78rem">
+          <div style="color:var(--muted);margin-bottom:8px">Query: WHERE name = 'Rahul'</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <div style="padding:6px 10px;background:rgba(248,113,113,.1);border-radius:6px;border:1px solid rgba(248,113,113,.2);display:flex;gap:8px">
+              <span style="color:var(--muted)">Row 1:</span><span>Amit ← check ✗</span>
+            </div>
+            <div style="padding:6px 10px;background:rgba(248,113,113,.1);border-radius:6px;border:1px solid rgba(248,113,113,.2);display:flex;gap:8px">
+              <span style="color:var(--muted)">Row 2:</span><span>Priya ← check ✗</span>
+            </div>
+            <div style="padding:6px 10px;background:rgba(52,211,153,.1);border-radius:6px;border:1px solid rgba(52,211,153,.3);display:flex;gap:8px">
+              <span style="color:var(--muted)">Row 3:</span><span>Rahul ← FOUND ✓</span>
+            </div>
+            <div style="padding:6px 10px;background:rgba(248,113,113,.1);border-radius:6px;border:1px solid rgba(248,113,113,.2);display:flex;gap:8px">
+              <span style="color:var(--muted)">Row 4:</span><span>Sneha ← check ✗</span>
+            </div>
+          </div>
+          <div style="color:var(--red);font-size:.75rem;margin-top:8px;font-weight:700">Full Table Scan = Slow 🐢</div>
+        </div>
+      </div>
+      <div style="font-size:2rem;color:var(--muted);align-self:center;flex-shrink:0">→</div>
+      <div style="flex:1;min-width:200px">
+        <div style="font-weight:700;color:var(--green);font-size:.85rem;margin-bottom:10px">✅ With Index</div>
+        <div style="background:rgba(0,0,0,.3);border-radius:10px;padding:12px;font-size:.78rem">
+          <div style="color:var(--muted);margin-bottom:8px">Index (Sorted B-Tree):</div>
+          <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px">
+            <div style="padding:6px 10px;background:rgba(167,139,250,.1);border-radius:6px;border:1px solid rgba(167,139,250,.2)">Amit → Row 1</div>
+            <div style="padding:6px 10px;background:rgba(167,139,250,.1);border-radius:6px;border:1px solid rgba(167,139,250,.2)">Priya → Row 2</div>
+            <div style="padding:6px 10px;background:rgba(52,211,153,.15);border-radius:6px;border:1px solid rgba(52,211,153,.4);font-weight:700;color:var(--green)">Rahul → Row 3 ✓ DIRECT!</div>
+            <div style="padding:6px 10px;background:rgba(167,139,250,.1);border-radius:6px;border:1px solid rgba(167,139,250,.2)">Sneha → Row 4</div>
+          </div>
+          <div style="color:var(--green);font-size:.75rem;font-weight:700">Direct Jump = Super Fast ⚡</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:14px;padding:12px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:10px;font-size:.82rem;color:var(--yellow)">
+      ⚠️ <strong>Trade-off:</strong> Index SELECT fast karta hai, lekin INSERT/UPDATE/DELETE slow ho jaata hai kyunki index bhi update karna padta hai!
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 4: DML ═══════════════ -->
+<div class="sec reveal" id="s4">
+  <div class="sec-title">
+    <div class="sec-icon" style="background:rgba(251,191,36,.15);border:2px solid rgba(251,191,36,.3)">✏️</div>
+    <div>
+      <h2 style="background:linear-gradient(90deg,var(--yellow),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">#4 Data Manipulation Language — DML</h2>
+      <p>Data insert, update, delete aur transactions</p>
+    </div>
+  </div>
+
+  <!-- TRANSACTION DIAGRAM -->
+  <div class="card reveal" style="margin-bottom:20px">
+    <div style="font-weight:800;font-size:1rem;margin-bottom:16px;color:var(--yellow)">💳 Transaction Flow — Bank Example</div>
+    <div style="display:flex;flex-direction:column;gap:0;align-items:center">
+      <!-- Start -->
+      <div style="background:rgba(167,139,250,.15);border:2px solid rgba(167,139,250,.4);border-radius:12px;padding:10px 30px;font-weight:800;color:var(--purple)">START TRANSACTION</div>
+      <div style="width:2px;height:20px;background:rgba(255,255,255,.15)"></div>
+      <!-- Operation 1 -->
+      <div style="background:rgba(96,165,250,.1);border:1.5px solid rgba(96,165,250,.3);border-radius:10px;padding:10px 24px;font-family:'Fira Code',monospace;font-size:.8rem;text-align:center;color:var(--blue)">
+        UPDATE accounts SET balance = balance - 5000<br>WHERE acc = 'A001' <span style="color:var(--muted)">(Amit ka account)</span>
+      </div>
+      <div style="width:2px;height:16px;background:rgba(255,255,255,.15)"></div>
+      <!-- Operation 2 -->
+      <div style="background:rgba(96,165,250,.1);border:1.5px solid rgba(96,165,250,.3);border-radius:10px;padding:10px 24px;font-family:'Fira Code',monospace;font-size:.8rem;text-align:center;color:var(--blue)">
+        UPDATE accounts SET balance = balance + 5000<br>WHERE acc = 'A002' <span style="color:var(--muted)">(Priya ka account)</span>
+      </div>
+      <div style="width:2px;height:20px;background:rgba(255,255,255,.15)"></div>
+      <!-- Decision diamond -->
+      <div style="background:rgba(251,191,36,.1);border:2px solid rgba(251,191,36,.3);border-radius:12px;padding:10px 24px;font-weight:800;color:var(--yellow)">❓ Dono successful?</div>
+      <div style="display:flex;gap:60px;margin-top:16px;align-items:flex-start">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+          <div style="color:var(--muted);font-size:.8rem">✅ YES</div>
+          <div style="background:rgba(52,211,153,.15);border:2px solid rgba(52,211,153,.4);border-radius:12px;padding:12px 24px;font-weight:800;color:var(--green);text-align:center">
+            COMMIT<br><small style="font-weight:400;color:var(--muted)">Permanently save!</small>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+          <div style="color:var(--muted);font-size:.8rem">❌ NO</div>
+          <div style="background:rgba(248,113,113,.15);border:2px solid rgba(248,113,113,.4);border-radius:12px;padding:12px 24px;font-weight:800;color:var(--red);text-align:center">
+            ROLLBACK<br><small style="font-weight:400;color:var(--muted)">Sab undo ho gaya!</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 5: FILTERING ═══════════════ -->
+<div class="sec reveal" id="s5">
+  <div class="sec-title">
+    <div class="sec-icon" style="background:rgba(251,146,60,.15);border:2px solid rgba(251,146,60,.3)">🔎</div>
+    <div>
+      <h2 style="background:linear-gradient(90deg,var(--orange),var(--red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">#5 Filtering Data</h2>
+      <p>BETWEEN, IN, LIKE, NULL — sab visual diagrams ke saath</p>
+    </div>
+  </div>
+
+  <!-- LIKE PATTERN DIAGRAM -->
+  <div class="card reveal" style="margin-bottom:20px">
+    <div style="font-weight:800;font-size:1rem;margin-bottom:16px;color:var(--orange)">🔡 LIKE Pattern Matching — Visual Guide</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px">
+      <div style="text-align:center;padding:16px;background:rgba(244,114,182,.08);border:2px solid rgba(244,114,182,.3);border-radius:14px">
+        <div style="font-family:'Fira Code',monospace;font-size:1.2rem;font-weight:700;color:var(--pink);margin-bottom:6px">'Ra%'</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:8px">Ra se shuru</div>
+        <div style="font-size:.78rem;color:var(--pink);background:rgba(244,114,182,.1);padding:4px 8px;border-radius:6px">Rahul ✓<br>Ravi ✓<br>Rajesh ✓</div>
+      </div>
+      <div style="text-align:center;padding:16px;background:rgba(96,165,250,.08);border:2px solid rgba(96,165,250,.3);border-radius:14px">
+        <div style="font-family:'Fira Code',monospace;font-size:1.2rem;font-weight:700;color:var(--blue);margin-bottom:6px">'%kumar'</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:8px">kumar pe khatam</div>
+        <div style="font-size:.78rem;color:var(--blue);background:rgba(96,165,250,.1);padding:4px 8px;border-radius:6px">Raj kumar ✓<br>Amit kumar ✓</div>
+      </div>
+      <div style="text-align:center;padding:16px;background:rgba(52,211,153,.08);border:2px solid rgba(52,211,153,.3);border-radius:14px">
+        <div style="font-family:'Fira Code',monospace;font-size:1.2rem;font-weight:700;color:var(--green);margin-bottom:6px">'%raj%'</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:8px">raj kahi bhi</div>
+        <div style="font-size:.78rem;color:var(--green);background:rgba(52,211,153,.1);padding:4px 8px;border-radius:6px">Rajesh ✓<br>Suraj ✓<br>Maharaj ✓</div>
+      </div>
+      <div style="text-align:center;padding:16px;background:rgba(251,191,36,.08);border:2px solid rgba(251,191,36,.3);border-radius:14px">
+        <div style="font-family:'Fira Code',monospace;font-size:1.2rem;font-weight:700;color:var(--yellow);margin-bottom:6px">'R_na'</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-bottom:8px">_ = ek koi bhi char</div>
+        <div style="font-size:.78rem;color:var(--yellow);background:rgba(251,191,36,.1);padding:4px 8px;border-radius:6px">Rina ✓<br>Rona ✓<br>Runa ✓</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      <div style="flex:1;min-width:180px;padding:12px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.2);border-radius:10px;text-align:center">
+        <div style="font-family:'Fira Code',monospace;font-size:1.1rem;font-weight:700;color:var(--green)">%</div>
+        <div style="font-size:.78rem;color:var(--muted);margin-top:4px">Zero ya zyada koi bhi characters</div>
+      </div>
+      <div style="flex:1;min-width:180px;padding:12px;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:10px;text-align:center">
+        <div style="font-family:'Fira Code',monospace;font-size:1.1rem;font-weight:700;color:var(--purple)">_</div>
+        <div style="font-size:.78rem;color:var(--muted);margin-top:4px">Exactly EK koi bhi character</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NULL DIAGRAM -->
+  <div class="card reveal">
+    <div style="font-weight:800;font-size:1rem;margin-bottom:14px;color:var(--red)">⚠️ NULL — The Special Value</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div style="background:rgba(248,113,113,.08);border:2px solid rgba(248,113,113,.3);border-radius:12px;padding:16px">
+        <div style="font-weight:800;color:var(--red);margin-bottom:10px">❌ GALAT tarika</div>
+        <div style="font-family:'Fira Code',monospace;font-size:.8rem;background:rgba(0,0,0,.4);padding:10px;border-radius:8px;margin-bottom:8px;color:var(--red)">
+          WHERE manager = NULL<br>WHERE manager != NULL
+        </div>
+        <div style="font-size:.78rem;color:var(--muted)">Ye KABHI kaam nahi karega! NULL = NULL bhi false hota hai SQL mein!</div>
+      </div>
+      <div style="background:rgba(52,211,153,.08);border:2px solid rgba(52,211,153,.3);border-radius:12px;padding:16px">
+        <div style="font-weight:800;color:var(--green);margin-bottom:10px">✅ SAHI tarika</div>
+        <div style="font-family:'Fira Code',monospace;font-size:.8rem;background:rgba(0,0,0,.4);padding:10px;border-radius:8px;margin-bottom:8px;color:var(--green)">
+          WHERE manager IS NULL<br>WHERE manager IS NOT NULL
+        </div>
+        <div style="font-size:.78rem;color:var(--muted)">Hamesha IS NULL ya IS NOT NULL use karo!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 6: JOINS ═══════════════ -->
+<div class="sec reveal" id="s6">
+  <div class="sec-title">
+    <div class="sec-icon" style="background:rgba(167,139,250,.15);border:2px solid rgba(167,139,250,.3)">🔗</div>
+    <div>
+      <h2 style="background:linear-gradient(90deg,var(--indigo),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">#6 Combining Data — JOINs & SET Operators</h2>
+      <p>Multiple tables ko milana — visual Venn diagrams ke saath</p>
+    </div>
+  </div>
+
+  <!-- JOIN VENN DIAGRAMS -->
+  <div class="join-grid reveal" style="margin-bottom:20px">
+
+    <!-- INNER JOIN -->
+    <div class="join-card-big">
+      <div class="join-card-header" style="background:rgba(34,211,238,.1);border-bottom:1px solid rgba(34,211,238,.2)">
+        <svg width="32" height="22" viewBox="0 0 60 40">
+          <circle cx="22" cy="20" r="18" fill="rgba(96,165,250,0.2)" stroke="#60a5fa" stroke-width="2"/>
+          <circle cx="38" cy="20" r="18" fill="rgba(251,146,60,0.2)" stroke="#fb923c" stroke-width="2"/>
+          <path d="M30,3.5 A18,18 0 0,1 30,36.5 A18,18 0 0,1 30,3.5" fill="rgba(34,211,238,0.5)"/>
+        </svg>
+        <span style="color:var(--cyan)">INNER JOIN</span>
+      </div>
+      <div class="join-card-body">Sirf wo rows jo <strong style="color:var(--cyan)">dono tables mein match karti hain</strong>. Unmatched rows dikhai nahi deti.</div>
+      <div class="join-card-code">SELECT e.name, d.dept_name<br>FROM employees e<br><span style="color:var(--cyan)">INNER JOIN</span> departments d<br>ON e.dept_id = d.dept_id;</div>
+    </div>
+
+    <!-- LEFT JOIN -->
+    <div class="join-card-big">
+      <div class="join-card-header" style="background:rgba(96,165,250,.1);border-bottom:1px solid rgba(96,165,250,.2)">
+        <svg width="32" height="22" viewBox="0 0 60 40">
+          <circle cx="22" cy="20" r="18" fill="rgba(96,165,250,0.5)" stroke="#60a5fa" stroke-width="2"/>
+          <circle cx="38" cy="20" r="18" fill="rgba(251,146,60,0.15)" stroke="#fb923c" stroke-width="2"/>
+          <path d="M30,3.5 A18,18 0 0,1 30,36.5 A18,18 0 0,1 30,3.5" fill="rgba(96,165,250,0.5)"/>
+        </svg>
+        <span style="color:var(--blue)">LEFT JOIN</span>
+      </div>
+      <div class="join-card-body"><strong style="color:var(--blue)">LEFT table ki SARI rows</strong> + right table ki matching rows. Unmatched right = NULL.</div>
+      <div class="join-card-code">SELECT e.name, d.dept_name<br>FROM employees e<br><span style="color:#60a5fa">LEFT JOIN</span> departments d<br>ON e.dept_id = d.dept_id;<br><span style="color:#6272a4">-- dept_name = NULL agar koi dept nahi</span></div>
+    </div>
+
+    <!-- RIGHT JOIN -->
+    <div class="join-card-big">
+      <div class="join-card-header" style="background:rgba(251,146,60,.1);border-bottom:1px solid rgba(251,146,60,.2)">
+        <svg width="32" height="22" viewBox="0 0 60 40">
+          <circle cx="22" cy="20" r="18" fill="rgba(96,165,250,0.15)" stroke="#60a5fa" stroke-width="2"/>
+          <circle cx="38" cy="20" r="18" fill="rgba(251,146,60,0.5)" stroke="#fb923c" stroke-width="2"/>
+          <path d="M30,3.5 A18,18 0 0,0 30,36.5 A18,18 0 0,0 30,3.5" fill="rgba(251,146,60,0.5)"/>
+        </svg>
+        <span style="color:var(--orange)">RIGHT JOIN</span>
+      </div>
+      <div class="join-card-body"><strong style="color:var(--orange)">RIGHT table ki SARI rows</strong> + left table ki matching rows. Unmatched left = NULL.</div>
+      <div class="join-card-code">SELECT e.name, d.dept_name<br>FROM employees e<br><span style="color:var(--orange)">RIGHT JOIN</span> departments d<br>ON e.dept_id = d.dept_id;<br><span style="color:#6272a4">-- emp.name = NULL agar koi emp nahi</span></div>
+    </div>
+
+    <!-- SELF JOIN -->
+    <div class="join-card-big">
+      <div class="join-card-header" style="background:rgba(244,114,182,.1);border-bottom:1px solid rgba(244,114,182,.2)">
+        <svg width="32" height="22" viewBox="0 0 60 40">
+          <circle cx="30" cy="20" r="16" fill="rgba(244,114,182,0.15)" stroke="#f472b6" stroke-width="2"/>
+          <text x="22" y="16" font-size="9" fill="#f472b6" font-weight="bold">emp</text>
+          <text x="22" y="27" font-size="9" fill="#f472b6" font-weight="bold">mgr</text>
+          <path d="M46,15 Q55,20 46,25" fill="none" stroke="#f472b6" stroke-width="2" marker-end="url(#arr)"/>
+        </svg>
+        <span style="color:var(--pink)">SELF JOIN</span>
+      </div>
+      <div class="join-card-body">Table <strong style="color:var(--pink)">apne aap se join hoti hai</strong>. Employee aur uske Manager ka naam ek hi table se nikalo!</div>
+      <div class="join-card-code">SELECT e.name AS Emp,<br>       m.name AS Manager<br>FROM employees e<br><span style="color:var(--pink)">LEFT JOIN</span> employees m<br>ON e.manager_id = m.emp_id;</div>
+    </div>
+
+    <!-- CROSS JOIN -->
+    <div class="join-card-big">
+      <div class="join-card-header" style="background:rgba(167,139,250,.1);border-bottom:1px solid rgba(167,139,250,.2)">
+        <svg width="32" height="22" viewBox="0 0 60 40">
+          <circle cx="22" cy="20" r="14" fill="rgba(167,139,250,0.2)" stroke="#a78bfa" stroke-width="2"/>
+          <circle cx="38" cy="20" r="14" fill="rgba(167,139,250,0.2)" stroke="#a78bfa" stroke-width="2"/>
+          <text x="14" y="24" font-size="8" fill="#a78bfa" font-weight="bold">A×B</text>
+        </svg>
+        <span style="color:var(--purple)">CROSS JOIN</span>
+      </div>
+      <div class="join-card-body">Har row × har row = <strong style="color:var(--purple)">Cartesian Product</strong>. 3 rows × 4 rows = 12 rows result!</div>
+      <div class="join-card-code">SELECT * FROM colors<br><span style="color:var(--purple)">CROSS JOIN</span> sizes;<br><span style="color:#6272a4">-- 3 colors × 4 sizes = 12 combinations</span></div>
+    </div>
+
+    <!-- FULL OUTER JOIN -->
+    <div class="join-card-big">
+      <div class="join-card-header" style="background:rgba(45,212,191,.1);border-bottom:1px solid rgba(45,212,191,.2)">
+        <svg width="32" height="22" viewBox="0 0 60 40">
+          <circle cx="22" cy="20" r="18" fill="rgba(45,212,191,0.35)" stroke="#2dd4bf" stroke-width="2"/>
+          <circle cx="38" cy="20" r="18" fill="rgba(45,212,191,0.35)" stroke="#2dd4bf" stroke-width="2"/>
+        </svg>
+        <span style="color:var(--teal)">FULL OUTER JOIN</span>
+      </div>
+      <div class="join-card-body"><strong style="color:var(--teal)">Dono tables ki SARI rows</strong>. Koi match nahi toh NULL. MySQL mein direct support nahi!</div>
+      <div class="join-card-code"><span style="color:#6272a4">-- MySQL workaround:</span><br>SELECT * FROM a <span style="color:var(--teal)">LEFT JOIN</span> b ON ...<br>UNION<br>SELECT * FROM a <span style="color:var(--teal)">RIGHT JOIN</span> b ON ...;</div>
+    </div>
+
+  </div>
+
+  <!-- SET OPERATORS DIAGRAM -->
+  <div class="card reveal">
+    <div style="font-weight:800;font-size:1rem;margin-bottom:16px;color:var(--indigo)">🔄 SET Operators — Visual Venn</div>
+
+    <!-- UNION -->
+    <div class="setop-row">
+      <div class="setop-venn">
+        <svg width="100" height="60" viewBox="0 0 100 60">
+          <circle cx="32" cy="30" r="25" fill="rgba(34,211,238,0.4)" stroke="#22d3ee" stroke-width="2"/>
+          <circle cx="68" cy="30" r="25" fill="rgba(34,211,238,0.4)" stroke="#22d3ee" stroke-width="2"/>
+          <text x="17" y="34" font-size="10" fill="#22d3ee" font-weight="bold">A</text>
+          <text x="78" y="34" font-size="10" fill="#22d3ee" font-weight="bold">B</text>
+        </svg>
+      </div>
+      <div class="setop-info" style="flex:1">
+        <h4 style="color:var(--cyan)">UNION</h4>
+        <p>Dono queries ke results combine karo. Duplicates <strong style="color:var(--red)">REMOVE</strong> ho jaate hain.</p>
+        <div class="setop-code" style="background:rgba(34,211,238,.08);color:var(--cyan);border:1px solid rgba(34,211,238,.2)">SELECT city FROM A UNION SELECT city FROM B;</div>
+      </div>
+    </div>
+
+    <!-- UNION ALL -->
+    <div class="setop-row">
+      <div class="setop-venn">
+        <svg width="100" height="60" viewBox="0 0 100 60">
+          <circle cx="32" cy="30" r="25" fill="rgba(52,211,153,0.4)" stroke="#34d399" stroke-width="2"/>
+          <circle cx="68" cy="30" r="25" fill="rgba(52,211,153,0.4)" stroke="#34d399" stroke-width="2"/>
+          <text x="17" y="34" font-size="10" fill="#34d399" font-weight="bold">A</text>
+          <text x="78" y="34" font-size="10" fill="#34d399" font-weight="bold">B</text>
+          <text x="43" y="34" font-size="8" fill="white" font-weight="bold">+dup</text>
+        </svg>
+      </div>
+      <div class="setop-info" style="flex:1">
+        <h4 style="color:var(--green)">UNION ALL</h4>
+        <p>Dono ke results combine karo. Duplicates <strong style="color:var(--green)">RAKHTA HAI</strong>. UNION se fast!</p>
+        <div class="setop-code" style="background:rgba(52,211,153,.08);color:var(--green);border:1px solid rgba(52,211,153,.2)">SELECT city FROM A UNION ALL SELECT city FROM B;</div>
+      </div>
+    </div>
+
+    <!-- INTERSECT -->
+    <div class="setop-row">
+      <div class="setop-venn">
+        <svg width="100" height="60" viewBox="0 0 100 60">
+          <circle cx="32" cy="30" r="25" fill="rgba(167,139,250,0.15)" stroke="#a78bfa" stroke-width="2"/>
+          <circle cx="68" cy="30" r="25" fill="rgba(167,139,250,0.15)" stroke="#a78bfa" stroke-width="2"/>
+          <path d="M50,7 A25,25 0 0,1 50,53 A25,25 0 0,0 50,7" fill="rgba(167,139,250,0.6)"/>
+        </svg>
+      </div>
+      <div class="setop-info" style="flex:1">
+        <h4 style="color:var(--purple)">INTERSECT</h4>
+        <p>Sirf wo rows jo <strong style="color:var(--purple)">DONO mein hain</strong>. Common rows nikalo.</p>
+        <div class="setop-code" style="background:rgba(167,139,250,.08);color:var(--purple);border:1px solid rgba(167,139,250,.2)">SELECT emp_id FROM proj_A INTERSECT SELECT emp_id FROM proj_B;</div>
+      </div>
+    </div>
+
+    <!-- EXCEPT -->
+    <div class="setop-row">
+      <div class="setop-venn">
+        <svg width="100" height="60" viewBox="0 0 100 60">
+          <circle cx="32" cy="30" r="25" fill="rgba(248,113,113,0.5)" stroke="#f87171" stroke-width="2"/>
+          <circle cx="68" cy="30" r="25" fill="rgba(255,255,255,0.05)" stroke="#f87171" stroke-width="2"/>
+          <path d="M50,7 A25,25 0 0,1 50,53 A25,25 0 0,0 50,7" fill="rgba(10,10,20,0.8)"/>
+        </svg>
+      </div>
+      <div class="setop-info" style="flex:1">
+        <h4 style="color:var(--red)">EXCEPT / MINUS</h4>
+        <p>Pehle mein hai, doosre mein <strong style="color:var(--red)">NAHI</strong> hai. A minus B.</p>
+        <div class="setop-code" style="background:rgba(248,113,113,.08);color:var(--red);border:1px solid rgba(248,113,113,.2)">SELECT emp_id FROM IT_dept EXCEPT SELECT emp_id FROM any_project;</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WINDOW FUNCTIONS DIAGRAM -->
+  <div class="card reveal" style="margin-top:20px">
+    <div style="font-weight:800;font-size:1rem;margin-bottom:6px;color:var(--purple)">📊 Window Functions — RANK vs DENSE_RANK vs ROW_NUMBER</div>
+    <div style="color:var(--muted);font-size:.82rem;margin-bottom:16px">Ye teen functions bahut confuse karte hain — ek example se samjho:</div>
+    <div class="wf-table">
+      <div class="wf-thead">
+        <span>Name</span><span>Salary</span><span style="color:var(--cyan)">ROW_NUMBER()</span><span style="color:var(--yellow)">RANK()</span><span style="color:var(--green)">DENSE_RANK()</span>
+      </div>
+      <div class="wf-row">
+        <span>Amit</span><span>90,000</span>
+        <span class="wf-highlight" style="background:rgba(34,211,238,.15);color:var(--cyan)">1</span>
+        <span class="wf-highlight" style="background:rgba(251,191,36,.15);color:var(--yellow)">1</span>
+        <span class="wf-highlight" style="background:rgba(52,211,153,.15);color:var(--green)">1</span>
+      </div>
+      <div class="wf-row">
+        <span>Priya</span><span>80,000</span>
+        <span class="wf-highlight" style="background:rgba(34,211,238,.15);color:var(--cyan)">2</span>
+        <span class="wf-highlight" style="background:rgba(251,191,36,.15);color:var(--yellow)">2</span>
+        <span class="wf-highlight" style="background:rgba(52,211,153,.15);color:var(--green)">2</span>
+      </div>
+      <div class="wf-row" style="background:rgba(255,255,255,.03)">
+        <span>Rahul</span><span style="color:var(--orange);font-weight:700">80,000 🔁</span>
+        <span class="wf-highlight" style="background:rgba(34,211,238,.15);color:var(--cyan)">3</span>
+        <span class="wf-highlight" style="background:rgba(251,191,36,.15);color:var(--yellow)">2</span>
+        <span class="wf-highlight" style="background:rgba(52,211,153,.15);color:var(--green)">2</span>
+      </div>
+      <div class="wf-row">
+        <span>Sneha</span><span>70,000</span>
+        <span class="wf-highlight" style="background:rgba(34,211,238,.15);color:var(--cyan)">4</span>
+        <span class="wf-highlight" style="background:rgba(248,113,113,.15);color:var(--red)">4 ← Gap! ⚠️</span>
+        <span class="wf-highlight" style="background:rgba(52,211,153,.15);color:var(--green)">3 ← No Gap ✓</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:14px">
+      <div style="padding:10px;background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.2);border-radius:8px;font-size:.78rem">
+        <strong style="color:var(--cyan)">ROW_NUMBER()</strong>: Har row ko unique number. Same salary pe bhi alag number.
+      </div>
+      <div style="padding:10px;background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);border-radius:8px;font-size:.78rem">
+        <strong style="color:var(--yellow)">RANK()</strong>: Tie pe same rank, lekin agli rank pe jump (Gap aata hai!)
+      </div>
+      <div style="padding:10px;background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.2);border-radius:8px;font-size:.78rem">
+        <strong style="color:var(--green)">DENSE_RANK()</strong>: Tie pe same rank, aur next rank continuous (No Gap!)
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ INTERVIEW Q&A ═══════════════ -->
+<div class="qa-section reveal" id="sq">
+  <div class="qa-title">🎯 Interview Questions & Answers</div>
+  <div class="qa-sub">Ye questions placement mein sabse zyada puchhe jaate hain — samajh ke yaad karo!</div>
+
+  <!-- Q1 -->
+  <div class="qa-card">
+    <div class="qa-question">
+      <div class="qa-q-badge" style="background:rgba(34,211,238,.15);color:var(--cyan);border:1px solid rgba(34,211,238,.3)">Q1</div>
+      <div class="qa-q-text">WHERE aur HAVING mein kya fark hai?</div>
+      <span class="qa-difficulty diff-easy">⭐ Easy</span>
+    </div>
+    <div class="qa-answer">
+      <div class="qa-ans-text"><strong style="color:var(--cyan)">WHERE</strong> individual rows ko filter karta hai — GROUP BY se pehle. <strong style="color:var(--yellow)">HAVING</strong> groups ko filter karta hai — GROUP BY ke baad.</div>
+      <pre class="qa-code" style="border-color:var(--cyan)"><span class="cm">-- WHERE: Sirf IT employees ko consider karo</span>
+<span class="kw">SELECT</span> dept, <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> dept <span class="op">=</span> <span class="str">'IT'</span>   <span class="cm">-- Row filter (before group)</span>
+<span class="kw">GROUP BY</span> dept;
+
+<span class="cm">-- HAVING: 5 se zyada employees wale departments</span>
+<span class="kw">SELECT</span> dept, <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> employees
+<span class="kw">GROUP BY</span> dept
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) <span class="op">></span> <span class="nu">5</span>; <span class="cm">-- Group filter (after group)</span></pre>
+      <div class="qa-key-points">
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--cyan)"></div><span>WHERE aggregate functions use nahi kar sakta (COUNT, SUM, AVG etc.) HAVING kar sakta hai</span></div>
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--yellow)"></div><span>HAVING bina GROUP BY ke bhi likh sakte ho, lekin mostly GROUP BY ke saath use hota hai</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="qa-card">
+    <div class="qa-question">
+      <div class="qa-q-badge" style="background:rgba(244,114,182,.15);color:var(--pink);border:1px solid rgba(244,114,182,.3)">Q2</div>
+      <div class="qa-q-text">2nd ya Nth highest salary kaise nikaalein?</div>
+      <span class="qa-difficulty diff-med">⭐⭐ Medium</span>
+    </div>
+    <div class="qa-answer">
+      <div class="qa-ans-text">Do popular methods hain — interviewer ko dono batao!</div>
+      <pre class="qa-code" style="border-color:var(--pink)"><span class="cm">-- Method 1: Subquery (Classic)</span>
+<span class="kw">SELECT</span> <span class="fn">MAX</span>(salary) <span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> salary <span class="op"><</span> (<span class="kw">SELECT</span> <span class="fn">MAX</span>(salary) <span class="kw">FROM</span> employees);
+
+<span class="cm">-- Method 2: DENSE_RANK (Modern, preferred)</span>
+<span class="kw">SELECT</span> salary <span class="kw">FROM</span> (
+  <span class="kw">SELECT</span> salary,
+    <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> salary <span class="kw">DESC</span>) <span class="kw">AS</span> rnk
+  <span class="kw">FROM</span> employees
+) t <span class="kw">WHERE</span> rnk <span class="op">=</span> <span class="nu">2</span>; <span class="cm">-- N change karo Nth ke liye</span></pre>
+      <div class="qa-key-points">
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--pink)"></div><span>DENSE_RANK method better hai kyunki N easily change kar sakte ho</span></div>
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--orange)"></div><span>RANK() use mat karo — gaps ki wajah se galat answer aa sakta hai</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="qa-card">
+    <div class="qa-question">
+      <div class="qa-q-badge" style="background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.3)">Q3</div>
+      <div class="qa-q-text">DROP, TRUNCATE, DELETE mein kya fark hai?</div>
+      <span class="qa-difficulty diff-easy">⭐ Easy</span>
+    </div>
+    <div class="qa-answer">
+      <div class="qa-ans-text">Ye ek-ek kar ke samjhao — interviewer impress hoga!</div>
+      <pre class="qa-code" style="border-color:var(--green)"><span class="cm">-- DELETE: Row by row, rollback ho sakta, WHERE laga sakte</span>
+<span class="kw">DELETE FROM</span> emp <span class="kw">WHERE</span> id <span class="op">=</span> <span class="nu">5</span>; <span class="cm">-- DML, slow, reversible</span>
+
+<span class="cm">-- TRUNCATE: Ek baar mein sab, fast, rollback nahi</span>
+<span class="kw">TRUNCATE TABLE</span> emp;          <span class="cm">-- DDL, fast, irreversible</span>
+
+<span class="cm">-- DROP: Table hi khatam, structure bhi jaata hai</span>
+<span class="kw">DROP TABLE</span> emp;               <span class="cm">-- DDL, permanent deletion</span></pre>
+      <div class="qa-key-points">
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--green)"></div><span>DELETE = DML, row by row, ROLLBACK possible, WHERE support karta hai</span></div>
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--yellow)"></div><span>TRUNCATE = DDL, ek saath sab, ROLLBACK nahi, identity reset hoti hai</span></div>
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--red)"></div><span>DROP = DDL, table aur structure sab permanent delete!</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="qa-card">
+    <div class="qa-question">
+      <div class="qa-q-badge" style="background:rgba(251,191,36,.15);color:var(--yellow);border:1px solid rgba(251,191,36,.3)">Q4</div>
+      <div class="qa-q-text">Duplicate records kaise dhundhe aur delete karein?</div>
+      <span class="qa-difficulty diff-med">⭐⭐ Medium</span>
+    </div>
+    <div class="qa-answer">
+      <div class="qa-ans-text">Pehle dhundho, phir delete karo — dono ek saath batao!</div>
+      <pre class="qa-code" style="border-color:var(--yellow)"><span class="cm">-- Step 1: Duplicates dhundho</span>
+<span class="kw">SELECT</span> email, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> cnt
+<span class="kw">FROM</span> employees
+<span class="kw">GROUP BY</span> email
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) <span class="op">></span> <span class="nu">1</span>;
+
+<span class="cm">-- Step 2: Duplicates delete karo, ek rakho</span>
+<span class="kw">DELETE FROM</span> employees
+<span class="kw">WHERE</span> emp_id <span class="kw">NOT IN</span> (
+  <span class="kw">SELECT</span> <span class="fn">MIN</span>(emp_id)  <span class="cm">-- Sabse pehla record rakho</span>
+  <span class="kw">FROM</span> employees
+  <span class="kw">GROUP BY</span> email
+);</pre>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="qa-card">
+    <div class="qa-question">
+      <div class="qa-q-badge" style="background:rgba(251,146,60,.15);color:var(--orange);border:1px solid rgba(251,146,60,.3)">Q5</div>
+      <div class="qa-q-text">Jo employee apne manager se zyada salary kamaata ho?</div>
+      <span class="qa-difficulty diff-hard">⭐⭐⭐ Hard</span>
+    </div>
+    <div class="qa-answer">
+      <div class="qa-ans-text">Ye SELF JOIN ka classic question hai! Table ko do alag naamon se use karo.</div>
+      <pre class="qa-code" style="border-color:var(--orange)"><span class="kw">SELECT</span>
+  e.name <span class="kw">AS</span> Employee,
+  e.salary <span class="kw">AS</span> Emp_Salary,
+  m.name <span class="kw">AS</span> Manager,
+  m.salary <span class="kw">AS</span> Mgr_Salary
+<span class="kw">FROM</span> employees e          <span class="cm">-- e = employee</span>
+<span class="kw">JOIN</span> employees m          <span class="cm">-- m = manager (same table!)</span>
+  <span class="kw">ON</span> e.manager_id <span class="op">=</span> m.emp_id
+<span class="kw">WHERE</span> e.salary <span class="op">></span> m.salary; <span class="cm">-- Employee > Manager</span></pre>
+      <div class="qa-key-points">
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--orange)"></div><span>Ye SELF JOIN hai — ek hi table ko "e" aur "m" do alag aliases de rahe hain</span></div>
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--pink)"></div><span>LEFT JOIN use karo agar bina manager wale employees bhi chahiye</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="qa-card">
+    <div class="qa-question">
+      <div class="qa-q-badge" style="background:rgba(167,139,250,.15);color:var(--purple);border:1px solid rgba(167,139,250,.3)">Q6</div>
+      <div class="qa-q-text">UNION aur UNION ALL mein kya fark hai?</div>
+      <span class="qa-difficulty diff-easy">⭐ Easy</span>
+    </div>
+    <div class="qa-answer">
+      <div class="qa-ans-text">Simple difference — duplicates aur performance!</div>
+      <pre class="qa-code" style="border-color:var(--purple)"><span class="cm">-- UNION: Duplicates remove karta hai (slow)</span>
+<span class="kw">SELECT</span> name <span class="kw">FROM</span> it_emp
+<span class="kw">UNION</span>
+<span class="kw">SELECT</span> name <span class="kw">FROM</span> hr_emp;   <span class="cm">-- Common names ek hi baar</span>
+
+<span class="cm">-- UNION ALL: Sab rakhta hai (fast)</span>
+<span class="kw">SELECT</span> name <span class="kw">FROM</span> it_emp
+<span class="kw">UNION ALL</span>
+<span class="kw">SELECT</span> name <span class="kw">FROM</span> hr_emp;   <span class="cm">-- Common names repeat honge</span></pre>
+      <div class="qa-key-points">
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--purple)"></div><span>UNION ALL tez hota hai kyunki sorting aur duplicate check nahi karta</span></div>
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--cyan)"></div><span>Dono mein same number of columns aur compatible types hone chahiye</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="qa-card">
+    <div class="qa-question">
+      <div class="qa-q-badge" style="background:rgba(248,113,113,.15);color:var(--red);border:1px solid rgba(248,113,113,.3)">Q7</div>
+      <div class="qa-q-text">PRIMARY KEY aur UNIQUE KEY mein kya fark hai?</div>
+      <span class="qa-difficulty diff-easy">⭐ Easy</span>
+    </div>
+    <div class="qa-answer">
+      <pre class="qa-code" style="border-color:var(--red)">PRIMARY KEY:    NOT NULL + UNIQUE = dono constraint ek saath
+                Ek table mein sirf EK primary key
+                Automatically cluster index banta hai
+
+UNIQUE KEY:     Values unique honge, lekin NULL allow hai
+                Ek table mein MULTIPLE unique keys ho sakti hain
+                Example: email, phone number</pre>
+      <div class="qa-key-points">
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--red)"></div><span>PK = NULL kabhi nahi. UNIQUE = NULL allowed (ek baar)</span></div>
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--yellow)"></div><span>Har table mein sirf ek PK hoti hai, lekin kai UNIQUE keys ho sakti hain</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q8 HOT -->
+  <div class="qa-card">
+    <div class="qa-question">
+      <div class="qa-q-badge" style="background:rgba(251,146,60,.15);color:var(--orange);border:1px solid rgba(251,146,60,.3)">Q8</div>
+      <div class="qa-q-text">SQL ka execution order kya hota hai? (SELECT FROM WHERE...)</div>
+      <span class="qa-difficulty diff-hot">🔥 Hot!</span>
+    </div>
+    <div class="qa-answer">
+      <div class="qa-ans-text">Ye bahut popular question hai! Likhne ka order aur chalane ka order ALAG hota hai.</div>
+      <pre class="qa-code" style="border-color:var(--orange)"><span class="cm">-- Likho aise:</span>
+<span class="kw">SELECT</span> dept, <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> salary <span class="op">></span> <span class="nu">30000</span>
+<span class="kw">GROUP BY</span> dept
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) <span class="op">></span> <span class="nu">2</span>
+<span class="kw">ORDER BY</span> dept;
+
+<span class="cm">-- Chalti hai aise:</span>
+<span class="cm">-- 1. FROM employees</span>
+<span class="cm">-- 2. WHERE salary > 30000  (pehle filter)</span>
+<span class="cm">-- 3. GROUP BY dept          (fir group)</span>
+<span class="cm">-- 4. HAVING COUNT(*) > 2   (groups filter)</span>
+<span class="cm">-- 5. SELECT dept, COUNT(*) (columns choose)</span>
+<span class="cm">-- 6. ORDER BY dept          (sort karo)</span></pre>
+    </div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="qa-card">
+    <div class="qa-question">
+      <div class="qa-q-badge" style="background:rgba(45,212,191,.15);color:var(--teal);border:1px solid rgba(45,212,191,.3)">Q9</div>
+      <div class="qa-q-text">Correlated Subquery kya hoti hai?</div>
+      <span class="qa-difficulty diff-hard">⭐⭐⭐ Hard</span>
+    </div>
+    <div class="qa-answer">
+      <div class="qa-ans-text">Ek subquery jo outer query ki current row ke values use karti hai — har row ke liye alag chalta hai!</div>
+      <pre class="qa-code" style="border-color:var(--teal)"><span class="cm">-- Har department mein sabse zyada salary wala employee</span>
+<span class="kw">SELECT</span> name, salary, dept
+<span class="kw">FROM</span> employees e
+<span class="kw">WHERE</span> salary <span class="op">=</span> (
+  <span class="kw">SELECT</span> <span class="fn">MAX</span>(salary)
+  <span class="kw">FROM</span> employees
+  <span class="kw">WHERE</span> dept <span class="op">=</span> e.dept  <span class="cm">-- e.dept = outer query ka dept!</span>
+);
+<span class="cm">-- Subquery har employee ke liye alag baar chalti hai</span></pre>
+      <div class="qa-key-points">
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--teal)"></div><span>Normal subquery ek baar chalti hai. Correlated subquery har outer row ke liye alag chalti hai</span></div>
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--red)"></div><span>Slow hoti hai large tables pe — JOIN ya Window functions better alternative hain</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="qa-card">
+    <div class="qa-question">
+      <div class="qa-q-badge" style="background:rgba(244,114,182,.15);color:var(--pink);border:1px solid rgba(244,114,182,.3)">Q10</div>
+      <div class="qa-q-text">VIEW kya hoti hai? Real table se kaise alag hai?</div>
+      <span class="qa-difficulty diff-med">⭐⭐ Medium</span>
+    </div>
+    <div class="qa-answer">
+      <div class="qa-ans-text">VIEW ek virtual table hai jo ek SELECT query ko store karta hai — data nahi, sirf query!</div>
+      <pre class="qa-code" style="border-color:var(--pink)"><span class="cm">-- View create karo</span>
+<span class="kw">CREATE VIEW</span> senior_employees <span class="kw">AS</span>
+<span class="kw">SELECT</span> name, salary, dept
+<span class="kw">FROM</span> employees
+<span class="kw">WHERE</span> experience <span class="op">></span> <span class="nu">5</span>;
+
+<span class="cm">-- Table ki tarah use karo</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> senior_employees;
+
+<span class="cm">-- Benefits: Security, Simplicity, Reusability</span></pre>
+      <div class="qa-key-points">
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--pink)"></div><span>View data store nahi karta — sirf query store hoti hai. Query har baar fresh chalti hai.</span></div>
+        <div class="qa-kp"><div class="qa-kp-dot" style="background:var(--blue)"></div><span>Security ke liye useful — sensitive columns chhupa sakte ho</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ FINAL SUMMARY ═══════════════ -->
+<div class="summary-section reveal">
+  <div style="font-size:2.5rem;text-align:center;margin-bottom:8px">📋</div>
+  <div class="summary-title">Final Summary — Exam Se Pehle Padhlo!</div>
+  <div style="text-align:center;color:var(--muted);font-size:.9rem;margin-bottom:4px">In sab cheezoon ko interview mein zaroor yaad rakho</div>
+
+  <div class="summary-grid">
+    <div class="summary-item">
+      <div class="sum-icon">🗂️</div>
+      <div class="sum-content">
+        <h4 style="color:var(--pink)">SQL Sublanguages</h4>
+        <p>DDL (structure), DML (data), DCL (permissions), TCL (transactions) — 4 types hote hain</p>
+      </div>
+    </div>
+    <div class="summary-item">
+      <div class="sum-icon">🔑</div>
+      <div class="sum-content">
+        <h4 style="color:var(--yellow)">Primary vs Foreign Key</h4>
+        <p>PK = NOT NULL + UNIQUE. FK = doosri table ka PK reference karta hai. Referential integrity maintain karta hai.</p>
+      </div>
+    </div>
+    <div class="summary-item">
+      <div class="sum-icon">🔢</div>
+      <div class="sum-content">
+        <h4 style="color:var(--cyan)">SQL Execution Order</h4>
+        <p>FROM → JOIN → WHERE → GROUP BY → HAVING → SELECT → DISTINCT → ORDER BY → LIMIT</p>
+      </div>
+    </div>
+    <div class="summary-item">
+      <div class="sum-icon">🔍</div>
+      <div class="sum-content">
+        <h4 style="color:var(--blue)">WHERE vs HAVING</h4>
+        <p>WHERE = rows filter (GROUP BY se pehle). HAVING = groups filter (GROUP BY ke baad). WHERE mein aggregate functions nahi chal sakte.</p>
+      </div>
+    </div>
+    <div class="summary-item">
+      <div class="sum-icon">💣</div>
+      <div class="sum-content">
+        <h4 style="color:var(--red)">DROP vs TRUNCATE vs DELETE</h4>
+        <p>DELETE=DML+WHERE+Rollback. TRUNCATE=DDL+Fast+NoRollback. DROP=Table khatam permanently.</p>
+      </div>
+    </div>
+    <div class="summary-item">
+      <div class="sum-icon">🔗</div>
+      <div class="sum-content">
+        <h4 style="color:var(--green)">JOINs Summary</h4>
+        <p>INNER=matching only. LEFT=all left+NULL. RIGHT=all right+NULL. FULL=dono. CROSS=all combinations. SELF=same table.</p>
+      </div>
+    </div>
+    <div class="summary-item">
+      <div class="sum-icon">🔄</div>
+      <div class="sum-content">
+        <h4 style="color:var(--purple)">UNION vs UNION ALL</h4>
+        <p>UNION=duplicates remove (slow). UNION ALL=sab rakhta hai (fast). Dono mein same columns chahiye.</p>
+      </div>
+    </div>
+    <div class="summary-item">
+      <div class="sum-icon">📊</div>
+      <div class="sum-content">
+        <h4 style="color:var(--orange)">Window Functions</h4>
+        <p>ROW_NUMBER=unique always. RANK=gaps aate hain. DENSE_RANK=no gaps. LAG=prev row. LEAD=next row.</p>
+      </div>
+    </div>
+    <div class="summary-item">
+      <div class="sum-icon">⚠️</div>
+      <div class="sum-content">
+        <h4 style="color:var(--teal)">NULL Rules</h4>
+        <p>NULL ke saath = ya != kabhi kaam nahi karta! Hamesha IS NULL ya IS NOT NULL use karo.</p>
+      </div>
+    </div>
+    <div class="summary-item">
+      <div class="sum-icon">🔡</div>
+      <div class="sum-content">
+        <h4 style="color:var(--indigo)">LIKE Wildcards</h4>
+        <p>% = zero ya zyada koi bhi characters. _ = exactly ek koi bhi character. LIKE case-insensitive in MySQL.</p>
+      </div>
+    </div>
+    <div class="summary-item">
+      <div class="sum-icon">⚡</div>
+      <div class="sum-content">
+        <h4 style="color:var(--pink)">ACID Properties</h4>
+        <p>Atomicity (all or nothing), Consistency (rules follow), Isolation (alag-alag), Durability (commit=permanent).</p>
+      </div>
+    </div>
+    <div class="summary-item">
+      <div class="sum-icon">📑</div>
+      <div class="sum-content">
+        <h4 style="color:var(--cyan)">Index Trade-off</h4>
+        <p>Index SELECT fast karta hai. Lekin INSERT/UPDATE/DELETE slow ho jaate hain. Primary key pe automatic index hota hai.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOST ASKED TOPICS -->
+  <div style="margin-top:28px;padding:24px;background:rgba(251,191,36,.06);border:2px solid rgba(251,191,36,.2);border-radius:16px">
+    <div style="font-weight:900;font-size:1rem;color:var(--yellow);margin-bottom:14px;display:flex;align-items:center;gap:8px">🔥 Placement mein Sabse Zyada Puchhe Jaane Waale Topics</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <span style="background:rgba(248,113,113,.2);color:var(--red);border:1px solid rgba(248,113,113,.3);padding:6px 14px;border-radius:8px;font-size:.82rem;font-weight:700">2nd Highest Salary</span>
+      <span style="background:rgba(34,211,238,.2);color:var(--cyan);border:1px solid rgba(34,211,238,.3);padding:6px 14px;border-radius:8px;font-size:.82rem;font-weight:700">WHERE vs HAVING</span>
+      <span style="background:rgba(52,211,153,.2);color:var(--green);border:1px solid rgba(52,211,153,.3);padding:6px 14px;border-radius:8px;font-size:.82rem;font-weight:700">DROP vs TRUNCATE vs DELETE</span>
+      <span style="background:rgba(251,191,36,.2);color:var(--yellow);border:1px solid rgba(251,191,36,.3);padding:6px 14px;border-radius:8px;font-size:.82rem;font-weight:700">JOIN types</span>
+      <span style="background:rgba(167,139,250,.2);color:var(--purple);border:1px solid rgba(167,139,250,.3);padding:6px 14px;border-radius:8px;font-size:.82rem;font-weight:707">RANK vs DENSE_RANK</span>
+      <span style="background:rgba(244,114,182,.2);color:var(--pink);border:1px solid rgba(244,114,182,.3);padding:6px 14px;border-radius:8px;font-size:.82rem;font-weight:700">Primary vs Foreign Key</span>
+      <span style="background:rgba(251,146,60,.2);color:var(--orange);border:1px solid rgba(251,146,60,.3);padding:6px 14px;border-radius:8px;font-size:.82rem;font-weight:700">SQL Execution Order</span>
+      <span style="background:rgba(45,212,191,.2);color:var(--teal);border:1px solid rgba(45,212,191,.3);padding:6px 14px;border-radius:8px;font-size:.82rem;font-weight:700">ACID Properties</span>
+      <span style="background:rgba(96,165,250,.2);color:var(--blue);border:1px solid rgba(96,165,250,.3);padding:6px 14px;border-radius:8px;font-size:.82rem;font-weight:700">UNION vs UNION ALL</span>
+      <span style="background:rgba(129,140,248,.2);color:var(--indigo);border:1px solid rgba(129,140,248,.3);padding:6px 14px;border-radius:8px;font-size:.82rem;font-weight:700">Duplicate Records</span>
+      <span style="background:rgba(248,113,113,.2);color:var(--red);border:1px solid rgba(248,113,113,.3);padding:6px 14px;border-radius:8px;font-size:.82rem;font-weight:700">Self Join (Manager-Emp)</span>
+      <span style="background:rgba(52,211,153,.2);color:var(--green);border:1px solid rgba(52,211,153,.3);padding:6px 14px;border-radius:8px;font-size:.82rem;font-weight:700">Subqueries</span>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<footer>
+  <div class="big">🚀</div>
+  <h3>Placement mein bahut acha karo!</h3>
+  <p style="margin-top:6px">SQL Visual Master Guide — Diagrams se samjho, interview crack karo! 💪</p>
+  <p style="margin-top:10px;font-size:.8rem;color:#374151">Ye notes banaye tumhare liye — Best of Luck! 🎯</p>
+</footer>
+
+<script>
+// Scroll reveal animation
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Stagger children reveals
+document.querySelectorAll('.acid-grid, .join-grid, .g2, .g3').forEach(grid => {
+  grid.querySelectorAll(':scope > *').forEach((child, i) => {
+    child.style.transitionDelay = `${i * 0.08}s`;
+  });
+});
+</script>
+</body>
+</html>

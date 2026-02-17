@@ -1,0 +1,16 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+
+.div1{
+    width: 100vw;
+    height: 100vh;
+    background-color: red;
+}
+.div2{
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(0, 221, 255);
+}
